@@ -27,6 +27,7 @@ Vagrant.configure(2) do |config|
     master.vm.provider :virtualbox do |vb|
       # Use VBoxManage to customize the VM. For example to change memory:
       vb.customize ["modifyvm", :id, "--memory", "1024", "--cpus", "2"]
+      vb.gui = true
     end
 
     # Enable provisioning with a shell script. Additional provisioners such as
@@ -81,6 +82,7 @@ Vagrant.configure(2) do |config|
     mnode1.vm.provider :virtualbox do |vb|
       # Use VBoxManage to customize the VM. For example to change memory:
       vb.customize ["modifyvm", :id, "--memory", "1024", "--cpus", "2"]
+      vb.gui = true
     end
 
     # Enable provisioning with a shell script. Additional provisioners such as
@@ -111,7 +113,7 @@ Vagrant.configure(2) do |config|
       sudo echo "docker,mesos" > /etc/mesos-slave/containerizers
       
       # open ports for mesos
-      suodo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
+      sudo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
 
       sudo systemctl stop mesos-master.service
       sudo systemctl disable mesos-master.service
@@ -135,6 +137,7 @@ Vagrant.configure(2) do |config|
     mnode2.vm.provider :virtualbox do |vb|
       # Use VBoxManage to customize the VM. For example to change memory:
       vb.customize ["modifyvm", :id, "--memory", "1024", "--cpus", "1"]
+      vb.gui = true
     end
 
     # Enable provisioning with a shell script. Additional provisioners such as
@@ -165,7 +168,7 @@ Vagrant.configure(2) do |config|
       sudo echo "docker,mesos" > /etc/mesos-slave/containerizers
       
       # open ports for mesos
-      suodo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
+      sudo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
 
       sudo systemctl stop mesos-master.service
       sudo systemctl disable mesos-master.service
@@ -189,6 +192,7 @@ Vagrant.configure(2) do |config|
     mnode3.vm.provider :virtualbox do |vb|
       # Use VBoxManage to customize the VM. For example to change memory:
       vb.customize ["modifyvm", :id, "--memory", "1024", "--cpus", "2"]
+      vb.gui = true
     end
 
     # Enable provisioning with a shell script. Additional provisioners such as
@@ -219,7 +223,7 @@ Vagrant.configure(2) do |config|
       sudo echo "docker,mesos" > /etc/mesos-slave/containerizers
       
       # open ports for mesos
-      suodo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
+      sudo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
 
       sudo systemctl stop mesos-master.service
       sudo systemctl disable mesos-master.service
@@ -249,6 +253,7 @@ Vagrant.configure(2) do |config|
     lb.vm.provider :virtualbox do |vb|
       # Use VBoxManage to customize the VM. For example to change memory:
       vb.customize ["modifyvm", :id, "--memory", "1024", "--cpus", "2"]
+      vb.gui = true
     end
 
     # Enable provisioning with a shell script. Additional provisioners such as
