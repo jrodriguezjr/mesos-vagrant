@@ -48,7 +48,7 @@ Vagrant.configure(2) do |config|
       sudo systemctl disable firewalld.service
       sudo yum erase -y firewalld
 
-      sudo echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n$(ifdata -pa eth1)\t$(hostname)" > /etc/hosts
+      sudo echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n" > /etc/hosts
       sudo cat /home/vagrant/sync/hosts >> /etc/hosts
    
       # Install Mesos repo and packages
@@ -192,7 +192,11 @@ Vagrant.configure(2) do |config|
     mnode3.vm.provider :virtualbox do |vb|
       # Use VBoxManage to customize the VM. For example to change memory:
       vb.customize ["modifyvm", :id, "--memory", "1024", "--cpus", "2"]
-      vb.gui = true
+
+      # Sometimes the SSH config setup times out due to this:
+      # http://stackoverflow.com/questions/22575261/vagrant-stuck-connection-timeout-retrying
+      # Try and toggle this to fix
+      vb.gui = false
     end
 
     # Enable provisioning with a shell script. Additional provisioners such as
@@ -253,7 +257,7 @@ Vagrant.configure(2) do |config|
     lb.vm.provider :virtualbox do |vb|
       # Use VBoxManage to customize the VM. For example to change memory:
       vb.customize ["modifyvm", :id, "--memory", "1024", "--cpus", "2"]
-      vb.gui = true
+      vb.gui = false
     end
 
     # Enable provisioning with a shell script. Additional provisioners such as
@@ -278,8 +282,9 @@ Vagrant.configure(2) do |config|
       # haproxy silliness
       sudo mkdir -p /run/haproxy
 
-      sudo echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n$(ifdata -pa eth1)\t$(hostname)" > /etc/hosts
+      sudo echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n" > /etc/hosts
       sudo cat /home/vagrant/sync/hosts >> /etc/hosts
+      sudo cp /home/vagrant/sync/go/bash_profile /root/.bash_profile
 
     SHELL
   end
