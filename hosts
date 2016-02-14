@@ -1,0 +1,8 @@
+#Mesos Workshop
+192.168.101.2	master
+192.168.101.3	mnode1
+192.168.101.4	mnode2
+192.168.101.5	mnode3
+192.168.101.6 lb
+192.168.101.6 portal
+192.168.101.6 ghostsite.dev

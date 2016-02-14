@@ -36,18 +36,21 @@ Vagrant.configure(2) do |config|
 
       # install epel
       sudo yum -y install epel-release
+      
+      # install tools
       sudo yum -y install net-tools moreutils docker golang wget
-      # sudo  
+      
+      # setup golang env
 
        # enforce hate on firewalld
       sudo systemctl stop firewalld.service
       sudo systemctl disable firewalld.service
       sudo yum erase -y firewalld
 
-      echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n$(ifdata -pa eth1)\tmaster" > /etc/hosts
-      echo -e "192.168.101.3\tmnode1\n192.168.101.4\tmnode2\n192.168.101.5\tmnode3\n" >> /etc/hosts
+      sudo echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n$(ifdata -pa eth1)\t$(hostname)" > /etc/hosts
+      sudo cat /home/vagrant/sync/hosts >> /etc/hosts
    
-      # install mesos repo and packages
+      # Install Mesos repo and packages
       sudo rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
       sudo yum --enablerepo=mesosphere clean metadata
       sudo yum -y install mesos mesosphere-zookeeper
@@ -55,9 +58,12 @@ Vagrant.configure(2) do |config|
 
       # Start Mesos Core Services
       sudo echo "1" > /var/lib/zookeeper/myid
+      sudo systemctl enable zookeeper.service
+      sudo systemctl enable mesos-master.service
+      sudo systemctl enable marathon.service
       sudo service zookeeper start
       sudo service mesos-master start
-      # sudo service marathon start
+      sudo service marathon start
 
       # Disable Mesos Slave Service on Masters
       sudo systemctl stop mesos-slave.service
@@ -96,7 +102,7 @@ Vagrant.configure(2) do |config|
       sudo yum --enablerepo=mesosphere clean metadata
       sudo yum -y install mesos 
 
-      # sudo service mesos-slave start
+      # setup zookeeper and mesos-slave items
       sudo echo "192.168.101.2 master" >> /etc/hosts
       sudo echo "zk://192.168.101.2:2181/mesos" > /etc/mesos/zk
 
@@ -104,12 +110,15 @@ Vagrant.configure(2) do |config|
       sudo echo "$(ifdata -pa eth1)" > /etc/mesos-slave/ip
       sudo echo "docker,mesos" > /etc/mesos-slave/containerizers
       
-      # open ports
+      # open ports for mesos
       suodo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
 
       sudo systemctl stop mesos-master.service
       sudo systemctl disable mesos-master.service
 
+
+      sudo systemctl enable mesos-slave.service
+      sudo systemctl enable docker.service
       sudo systemctl start mesos-slave.service
       sudo systemctl start docker.service
 
@@ -147,20 +156,23 @@ Vagrant.configure(2) do |config|
       sudo yum --enablerepo=mesosphere clean metadata
       sudo yum -y install mesos 
 
-      # sudo service mesos-slave start
+      # setup zookeeper and mesos-slave items
       sudo echo "192.168.101.2 master" >> /etc/hosts
       sudo echo "zk://192.168.101.2:2181/mesos" > /etc/mesos/zk
 
       sudo echo "$(hostname)" > /etc/mesos-slave/hostname
       sudo echo "$(ifdata -pa eth1)" > /etc/mesos-slave/ip
       sudo echo "docker,mesos" > /etc/mesos-slave/containerizers
-
-      # open ports
+      
+      # open ports for mesos
       suodo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
 
       sudo systemctl stop mesos-master.service
       sudo systemctl disable mesos-master.service
 
+
+      sudo systemctl enable mesos-slave.service
+      sudo systemctl enable docker.service
       sudo systemctl start mesos-slave.service
       sudo systemctl start docker.service
 
@@ -183,36 +195,40 @@ Vagrant.configure(2) do |config|
     # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
     # documentation for more information about their specific syntax and use.
     mnode3.vm.provision "shell", inline: <<-SHELL
-        # install epel
-        sudo yum -y install epel-release
-        sudo yum -y install net-tools moreutils docker
 
-        # enforce hate on firewalld
-        sudo systemctl stop firewalld.service
-        sudo systemctl disable firewalld.service
-        sudo yum erase -y firewalld
+      # install epel
+      sudo yum -y install epel-release
+      sudo yum -y install net-tools moreutils docker
 
-        # install mesos repo and packages
-        sudo rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
-        sudo yum --enablerepo=mesosphere clean metadata
-        sudo yum -y install mesos 
+      # enforce hate on firewalld
+      sudo systemctl stop firewalld.service
+      sudo systemctl disable firewalld.service
+      sudo yum erase -y firewalld
 
-        # sudo service mesos-slave start
-        sudo echo "192.168.101.2 master" >> /etc/hosts
-        sudo echo "zk://192.168.101.2:2181/mesos" > /etc/mesos/zk
+      # install mesos repo and packages
+      sudo rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
+      sudo yum --enablerepo=mesosphere clean metadata
+      sudo yum -y install mesos 
 
-        sudo echo "$(hostname)" > /etc/mesos-slave/hostname
-        sudo echo "$(ifdata -pa eth1)" > /etc/mesos-slave/ip
-        sudo echo "docker,mesos" > /etc/mesos-slave/containerizers
+      # setup zookeeper and mesos-slave items
+      sudo echo "192.168.101.2 master" >> /etc/hosts
+      sudo echo "zk://192.168.101.2:2181/mesos" > /etc/mesos/zk
 
-        # open ports
-        suodo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
+      sudo echo "$(hostname)" > /etc/mesos-slave/hostname
+      sudo echo "$(ifdata -pa eth1)" > /etc/mesos-slave/ip
+      sudo echo "docker,mesos" > /etc/mesos-slave/containerizers
+      
+      # open ports for mesos
+      suodo iptables -A INPUT -p tcp --match multiport --dports 31000:32000 -j ACCEPT
 
-        sudo systemctl stop mesos-master.service
-        sudo systemctl disable mesos-master.service
+      sudo systemctl stop mesos-master.service
+      sudo systemctl disable mesos-master.service
 
-        sudo systemctl start mesos-slave.service
-        sudo systemctl start docker.service
+
+      sudo systemctl enable mesos-slave.service
+      sudo systemctl enable docker.service
+      sudo systemctl start mesos-slave.service
+      sudo systemctl start docker.service
 
       SHELL
     end
@@ -257,8 +273,8 @@ Vagrant.configure(2) do |config|
       # haproxy silliness
       sudo mkdir -p /run/haproxy
 
-      echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n$(ifdata -pa eth1)\tmaster" > /etc/hosts
-      echo -e "192.168.101.3\tmnode1\n192.168.101.4\tmnode2\n192.168.101.5\tmnode3\n" >> /etc/hosts
+      sudo echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n$(ifdata -pa eth1)\t$(hostname)" > /etc/hosts
+      sudo cat /home/vagrant/sync/hosts >> /etc/hosts
 
     SHELL
   end
