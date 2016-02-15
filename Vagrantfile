@@ -196,7 +196,7 @@ Vagrant.configure(2) do |config|
       # Sometimes the SSH config setup times out due to this:
       # http://stackoverflow.com/questions/22575261/vagrant-stuck-connection-timeout-retrying
       # Try and toggle this to fix
-      vb.gui = false
+      vb.gui = true
     end
 
     # Enable provisioning with a shell script. Additional provisioners such as
