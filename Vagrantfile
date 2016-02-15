@@ -50,6 +50,7 @@ Vagrant.configure(2) do |config|
 
       sudo echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n" > /etc/hosts
       sudo cat /home/vagrant/sync/hosts >> /etc/hosts
+      sudo cp /home/vagrant/sync/launchtool /root/
    
       # Install Mesos repo and packages
       sudo rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm

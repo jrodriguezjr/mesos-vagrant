@@ -9,9 +9,10 @@
       ]
     }
   },
-  "id": "portal",
+  "id": "nginx",
   "instances": 1,
   "cpus": 0.25,
   "mem": 64,
   "uris": []
+}
 
